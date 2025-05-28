@@ -13,6 +13,7 @@ main                → Production branch (always stable)
               ├── feature/sticker-system
               ├── feature/shop-module
               ├── feature/basic-ui-upgrade
+              ├──feature/droplink-mate
               └── ... (any other feature branches)
 
 
