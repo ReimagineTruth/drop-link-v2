@@ -1,8 +1,18 @@
 main                → Production branch (always stable)
 │
 └── dev-droplink    → Development branch (all features get merged here first)
-     ├── feature/pi-domain
-     ├── feature/sticker-system
-     ├── feature/shop-module
-     ├── feature/basic-ui-upgrade
-     └── ... (any other feature branches)
+     └── dev-droplink
+     ├── feature/ai-content-assistant
+     ├── feature/template-marketplace
+     ├── feature/affiliate-system
+     ├── feature/merch-integration
+     ├── feature/advanced-automations
+     └── feature/multi-language-support
+     │    └── Upcoming Features
+              ├── feature/pi-domain
+              ├── feature/sticker-system
+              ├── feature/shop-module
+              ├── feature/basic-ui-upgrade
+              └── ... (any other feature branches)
+
+
