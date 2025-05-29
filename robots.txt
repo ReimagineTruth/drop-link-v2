@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://droplink.space/sitemap.xml
