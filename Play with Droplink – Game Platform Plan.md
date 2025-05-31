@@ -2,6 +2,13 @@
 
 Welcome to **Play with Droplink** — a Pi Network-integrated gaming platform offering both free and premium interactive games with monetization through Pi AdNetwork and monthly subscriptions.
 
+Core Goals:
+
+Drive fun and engaging user activity
+Improve users’ critical thinking
+Boost user engagement
+Increase Pi Browser traffic
+ 
 ---
 
 ## 🌟 Features
