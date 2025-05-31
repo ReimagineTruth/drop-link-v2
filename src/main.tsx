@@ -5,24 +5,14 @@ import App from './App.tsx'
 import './index.css'
 import { HelmetProvider } from 'react-helmet-async'
 import SplashScreen from './components/SplashScreen.tsx'
-import Welcome from './pages/Welcome.tsx'
 import { preloadPiSDK } from './utils/pi-sdk-loader'
 import PiLogger from './utils/pi-logger'
 
 const Root = () => {
   const [showSplash, setShowSplash] = useState(true);
-  const [showWelcome, setShowWelcome] = useState(false);
   
   const handleSplashComplete = () => {
     setShowSplash(false);
-    // Always show welcome page after splash
-    setShowWelcome(true);
-  };
-
-  const handleWelcomeComplete = () => {
-    setShowWelcome(false);
-    // Mark that user has seen welcome
-    localStorage.setItem('droplink_welcomed', 'true');
   };
 
   useEffect(() => {
@@ -40,8 +30,6 @@ const Root = () => {
       <HelmetProvider>
         {showSplash ? (
           <SplashScreen onComplete={handleSplashComplete} />
-        ) : showWelcome ? (
-          <Welcome onEnter={handleWelcomeComplete} />
         ) : (
           <App />
         )}

@@ -5,7 +5,6 @@ import { HelmetProvider } from "react-helmet-async";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import Home from "@/pages/Home";
-import Welcome from "@/pages/Welcome";
 import Pricing from "@/pages/Pricing";
 import Contact from "@/pages/Contact";
 import Terms from "@/pages/Terms";
@@ -14,7 +13,6 @@ import Features from "@/pages/Features";
 import Community from "@/pages/Community";
 import Help from "@/pages/Help";
 import NotFound from "@/pages/NotFound";
-import PlayWithMascot from "@/pages/PlayWithMascot";
 import { UserProvider } from "@/context/UserContext";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
@@ -66,7 +64,6 @@ function App() {
           <Router>
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/welcome" element={<Welcome />} />
               <Route path="/index" element={<Index />} />
               <Route path="/about" element={<About />} />
               <Route path="/pricing" element={<Pricing />} />
@@ -92,7 +89,6 @@ function App() {
               <Route path="/stickers" element={<Stickers />} />
               <Route path="/store" element={<Store />} />
               <Route path="/status" element={<SystemStatus />} />
-              <Route path="/play" element={<PlayWithMascot />} />
               <Route path="/login" element={<Login />} />
               <Route path="/login-page" element={<LoginPage />} />
               <Route path="/signup" element={<Signup />} />

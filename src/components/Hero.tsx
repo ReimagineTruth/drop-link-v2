@@ -1,331 +1,142 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { ArrowRight, Star, Shield, Zap, Globe } from 'lucide-react';
-import { Link } from 'react-router-dom';
+
+import React from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Users, Globe, Zap, DollarSign, Play } from "lucide-react";
+import { useUser } from "@/context/UserContext";
 
 const Hero = () => {
-  const [currentEmotion, setCurrentEmotion] = useState(0);
-  
-  const emotions = [
-  { thought: "Welcome to Droplink!", eyes: "happy", mouth: "smile" },
-  { thought: "I'm sleepy... 😴", eyes: "sleepy", mouth: "neutral" },
-  { thought: "Let's build something amazing!", eyes: "excited", mouth: "big-smile" },
-  { thought: "Pi Network is awesome! π", eyes: "normal", mouth: "smile" },
-  { thought: "Ready to get started?", eyes: "wink", mouth: "smile" },
-  { thought: "Hmm... I'm thinking 🤔", eyes: "thinking", mouth: "pursed" },
-  { thought: "Wow, that’s cool! 🤩", eyes: "starry", mouth: "open-smile" },
-  { thought: "Uh-oh... something went wrong!", eyes: "worried", mouth: "frown" },
-  { thought: "I love being helpful! 💡", eyes: "bright", mouth: "grin" },
-  { thought: "Yikes! That scared me! 😱", eyes: "wide", mouth: "shocked" },
-  { thought: "You're doing great! 🌟", eyes: "encouraging", mouth: "gentle-smile" },
-  { thought: "Need a break? ☕", eyes: "tired", mouth: "soft-smile" },
-  { thought: "Let's hustle! 🚀", eyes: "focused", mouth: "determined" },
-  { thought: "So peaceful... 🧘", eyes: "calm", mouth: "content" },
-  { thought: "Hehe, that’s funny 😄", eyes: "playful", mouth: "laugh" }
-];
-
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentEmotion((prev) => (prev + 1) % emotions.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const renderEyes = (type: string) => {
-    switch (type) {
-      case "happy":
-        return (
-          <>
-            <path d="M110 160 Q120 155 130 160" stroke="#333" strokeWidth="3" fill="none" strokeLinecap="round" />
-            <path d="M170 160 Q180 155 190 160" stroke="#333" strokeWidth="3" fill="none" strokeLinecap="round" />
-          </>
-        );
-      case "sleepy":
-        return (
-          <>
-            <path d="M110 165 L130 165" stroke="#333" strokeWidth="3" strokeLinecap="round" />
-            <path d="M170 165 L190 165" stroke="#333" strokeWidth="3" strokeLinecap="round" />
-          </>
-        );
-      case "excited":
-        return (
-          <>
-            <circle cx="120" cy="165" r="9" fill="#fff" />
-            <circle cx="180" cy="165" r="9" fill="#fff" />
-            <circle cx="120" cy="165" r="6" fill="#333" />
-            <circle cx="180" cy="165" r="6" fill="#333" />
-          </>
-        );
-      case "wink":
-        return (
-          <>
-            <circle cx="120" cy="165" r="9" fill="#fff" />
-            <circle cx="123" cy="168" r="4.5" fill="#333" />
-            <path d="M170 160 Q180 155 190 160" stroke="#333" strokeWidth="3" fill="none" strokeLinecap="round" />
-          </>
-        );
-      default:
-        return (
-          <>
-            <circle cx="120" cy="165" r="9" fill="#fff" />
-            <circle cx="180" cy="165" r="9" fill="#fff" />
-            <circle cx="123" cy="168" r="4.5" fill="#333" className="animate-gentle-blink" />
-            <circle cx="183" cy="168" r="4.5" fill="#333" className="animate-gentle-blink" />
-          </>
-        );
-    }
-  };
-
-  const renderMouth = (type: string) => {
-    switch (type) {
-      case "big-smile":
-        return (
-          <path
-            d="M115 210 Q150 250 185 210"
-            stroke="#fff"
-            strokeWidth="4.5"
-            fill="none"
-            strokeLinecap="round"
-          />
-        );
-      case "neutral":
-        return (
-          <ellipse cx="150" cy="220" rx="8" ry="3" fill="#fff" />
-        );
-      default:
-        return (
-          <path
-            d="M120 210 Q150 240 180 210"
-            stroke="#fff"
-            strokeWidth="4.5"
-            fill="none"
-            strokeLinecap="round"
-          />
-        );
-    }
-  };
+  const { isLoggedIn, profile } = useUser();
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-muted/20 to-primary/10">
-      {/* Background Effects */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-5" />
-      <div className="absolute top-20 left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 right-20 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-pulse delay-1000" />
+    <section className="relative min-h-screen flex items-center justify-center px-4 py-20 overflow-hidden">
+      {/* Enhanced background with mobile optimization */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-indigo-50" />
+      <div className="absolute -top-40 -right-40 w-80 h-80 md:w-96 md:h-96 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute -bottom-40 -left-40 w-80 h-80 md:w-96 md:h-96 bg-gradient-to-br from-secondary/20 to-primary/20 rounded-full blur-3xl animate-pulse" />
       
-      {/* Mascot */}
-      <div className="absolute right-10 top-1/2 transform -translate-y-1/2 hidden lg:block">
-        <svg
-          width="300"
-          height="360"
-          viewBox="0 0 300 360"
-          className="animate-bounce-gentle"
-        >
-          {/* Droplet shape */}
-          <path
-            d="M150 30 C90 90, 52.5 150, 52.5 210 C52.5 277.5, 97.5 330, 150 330 C202.5 330, 247.5 277.5, 247.5 210 C247.5 150, 210 90, 150 30 Z"
-            fill="url(#heroDropletGradient)"
-            className="animate-pulse-gentle"
-          />
+      <div className="container mx-auto relative z-10">
+        <div className="text-center max-w-5xl mx-auto space-y-6 md:space-y-8">
+          {/* Enhanced heading with mobile responsiveness */}
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
+            <span className="bg-gradient-to-r from-primary via-blue-600 to-secondary bg-clip-text text-transparent">
+              Drive Mass Adoption
+            </span>
+            <br />
+            <span className="text-gray-900">with Droplink</span>
+          </h1>
           
-          {/* Gradient definition */}
-          <defs>
-            <linearGradient id="heroDropletGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#00aaff" />
-              <stop offset="50%" stopColor="#0099ee" />
-              <stop offset="100%" stopColor="#0077cc" />
-            </linearGradient>
-          </defs>
+          {/* Enhanced description */}
+          <p className="text-lg md:text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            The complete link-in-bio platform for Pi Network creators. From custom profiles to Pi payments, 
+            analytics to templates - everything you need to monetize your audience and drive Pi Network adoption.
+          </p>
           
-          {/* Highlight */}
-          <ellipse
-            cx="112.5"
-            cy="105"
-            rx="18"
-            ry="27"
-            fill="rgba(255, 255, 255, 0.6)"
-            className="animate-shimmer"
-          />
-          
-          {/* Face */}
-          {renderEyes(emotions[currentEmotion].eyes)}
-          {renderMouth(emotions[currentEmotion].mouth)}
-          
-          {/* Thought bubble */}
-          <g className="animate-float">
-            <path
-              d="M200 60 Q200 40 220 40 L290 40 Q310 40 310 60 L310 110 Q310 130 290 130 L250 130 L230 150 L250 130 L220 130 Q200 130 200 110 Z"
-              fill="#fff"
-              stroke="#0099ee"
-              strokeWidth="2"
-              className="drop-shadow-md"
-            />
-            <text x="255" y="70" textAnchor="middle" className="text-xs font-medium fill-primary">
-              {emotions[currentEmotion].thought.split(' ').slice(0, 2).join(' ')}
-            </text>
-            <text x="255" y="85" textAnchor="middle" className="text-xs font-medium fill-primary">
-              {emotions[currentEmotion].thought.split(' ').slice(2, 4).join(' ')}
-            </text>
-            <text x="255" y="100" textAnchor="middle" className="text-xs font-medium fill-primary">
-              {emotions[currentEmotion].thought.split(' ').slice(4).join(' ')}
-            </text>
-            
-            {/* Small thought bubbles */}
-            <circle cx="210" cy="140" r="3" fill="#fff" stroke="#0099ee" strokeWidth="1" />
-            <circle cx="200" cy="148" r="2" fill="#fff" stroke="#0099ee" strokeWidth="1" />
-          </g>
-        </svg>
-      </div>
-      
-      <div className="container mx-auto px-4 py-20 relative z-10">
-        <div className="max-w-4xl mx-auto text-center lg:text-left lg:max-w-2xl">
-          {/* Main Hero Content */}
-          <div className="mb-8">
-            <div className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary font-medium text-sm mb-6 animate-fade-in">
-              <Star className="w-4 h-4 mr-2" />
-              Powered by Pi Network
+          {/* Feature highlights with mobile layout */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-4xl mx-auto my-8 md:my-12">
+            <div className="text-center p-3 md:p-4 bg-white/50 backdrop-blur-sm rounded-xl border border-white/20">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-hero rounded-full flex items-center justify-center mx-auto mb-2 md:mb-3">
+                <Users className="h-5 w-5 md:h-6 md:w-6 text-white" />
+              </div>
+              <p className="text-sm md:text-base font-semibold text-gray-900">Custom Profiles</p>
             </div>
             
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-blue-600 to-secondary bg-clip-text text-transparent leading-tight animate-fade-in delay-200">
-              Your Pi Domain,
-              <br />
-              Your Digital Hub
-            </h1>
+            <div className="text-center p-3 md:p-4 bg-white/50 backdrop-blur-sm rounded-xl border border-white/20">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-hero rounded-full flex items-center justify-center mx-auto mb-2 md:mb-3">
+                <DollarSign className="h-5 w-5 md:h-6 md:w-6 text-white" />
+              </div>
+              <p className="text-sm md:text-base font-semibold text-gray-900">Pi Payments</p>
+            </div>
             
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto lg:mx-0 leading-relaxed animate-fade-in delay-400">
-              Transform your .pi domain into a powerful business hub with Pi payments, 
-              professional profiles, and seamless Pi Browser integration.
+            <div className="text-center p-3 md:p-4 bg-white/50 backdrop-blur-sm rounded-xl border border-white/20">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-hero rounded-full flex items-center justify-center mx-auto mb-2 md:mb-3">
+                <Globe className="h-5 w-5 md:h-6 md:w-6 text-white" />
+              </div>
+              <p className="text-sm md:text-base font-semibold text-gray-900">Pi Domains</p>
+            </div>
+            
+            <div className="text-center p-3 md:p-4 bg-white/50 backdrop-blur-sm rounded-xl border border-white/20">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-hero rounded-full flex items-center justify-center mx-auto mb-2 md:mb-3">
+                <Zap className="h-5 w-5 md:h-6 md:w-6 text-white" />
+              </div>
+              <p className="text-sm md:text-base font-semibold text-gray-900">100+ Templates</p>
+            </div>
+          </div>
+
+          {/* Video Demo Section */}
+          <div className="my-12 md:my-16">
+            <div className="max-w-4xl mx-auto">
+              <div className="relative bg-white rounded-xl md:rounded-2xl shadow-xl overflow-hidden">
+                {/* Video Container - Responsive 16:9 aspect ratio */}
+                <div className="relative w-full" style={{ paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
+                  <iframe 
+                    src="https://www.youtube-nocookie.com/embed/1sv5cf9ygZs?si=rATq0V5J1SH_iNpE&controls=1" 
+                    title="Droplink Demo - Transform Your Pi Domain" 
+                    frameBorder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    referrerPolicy="strict-origin-when-cross-origin" 
+                    allowFullScreen
+                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                  />
+                  
+                  {/* Overlay for branding */}
+                  <div className="absolute top-2 md:top-4 left-2 md:left-4 bg-black/50 backdrop-blur-sm rounded-lg px-2 md:px-3 py-1 md:py-2 z-10">
+                    <div className="flex items-center gap-1 md:gap-2 text-white text-xs md:text-sm font-medium">
+                      <Play className="h-3 w-3 md:h-4 md:w-4" />
+                      Droplink Demo
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Enhanced CTA buttons with mobile optimization */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4 md:pt-6">
+            {isLoggedIn && profile ? (
+              <>
+                <Button asChild size="lg" className="w-full sm:w-auto bg-gradient-hero hover:bg-secondary transform transition hover:scale-105 duration-200 text-lg px-8 py-4">
+                  <Link to="/dashboard" className="flex items-center gap-2">
+                    Go to Dashboard <ArrowRight size={20} />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="w-full sm:w-auto hover:bg-blue-50 transition-colors text-lg px-8 py-4">
+                  <Link to={`/@${profile.username}`}>View Your Profile</Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button asChild size="lg" className="w-full sm:w-auto bg-gradient-hero hover:bg-secondary transform transition hover:scale-105 duration-200 text-lg px-8 py-4">
+                  <Link to="/signup" className="flex items-center gap-2">
+                    Start Building Free <ArrowRight size={20} />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="w-full sm:w-auto hover:bg-blue-50 transition-colors text-lg px-8 py-4">
+                  <Link to="/demo">Try Demo</Link>
+                </Button>
+              </>
+            )}
+          </div>
+          
+          {/* Social proof with mobile layout */}
+          <div className="pt-8 md:pt-12">
+            <p className="text-sm md:text-base text-gray-500 mb-4 md:mb-6">
+              Trusted by Pi Network creators worldwide
             </p>
-          </div>
-
-          {/* Feature Highlights */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 animate-fade-in delay-600">
-            <div className="flex items-center justify-center p-4 bg-white/50 backdrop-blur-sm rounded-lg border border-primary/20">
-              <Shield className="w-6 h-6 text-primary mr-3" />
-              <span className="font-medium">Pi Native Integration</span>
-            </div>
-            <div className="flex items-center justify-center p-4 bg-white/50 backdrop-blur-sm rounded-lg border border-primary/20">
-              <Zap className="w-6 h-6 text-primary mr-3" />
-              <span className="font-medium">Instant Pi Payments</span>
-            </div>
-            <div className="flex items-center justify-center p-4 bg-white/50 backdrop-blur-sm rounded-lg border border-primary/20">
-              <Star className="w-6 h-6 text-primary mr-3" />
-              <span className="font-medium">Professional Profiles</span>
-            </div>
-          </div>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center animate-fade-in delay-800 mb-12">
-            <Button 
-              asChild
-              size="lg" 
-              className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 transform transition hover:scale-105 duration-200 text-lg px-8 py-4"
-            >
-              <Link to="/signup">
-                Get Started Free <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-            <Button 
-              asChild
-              variant="outline" 
-              size="lg" 
-              className="hover:bg-primary/5 transition-colors text-lg px-8 py-4"
-            >
-              <Link to="/demo">Watch Demo</Link>
-            </Button>
-          </div>
-
-          {/* Embedded Video Section */}
-          <div className="mb-12 animate-fade-in delay-1000">
-            <div className="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-primary/20">
-              <h3 className="text-xl font-bold mb-4 text-center">See Droplink in Action</h3>
-              <div className="relative w-full" style={{ paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
-                <iframe 
-                  src="https://www.youtube-nocookie.com/embed/1sv5cf9ygZs?si=rATq0V5J1SH_iNpE&controls=1" 
-                  title="Droplink Demo Video" 
-                  frameBorder="0" 
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                  referrerPolicy="strict-origin-when-cross-origin" 
-                  allowFullScreen
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                  className="rounded-lg"
-                />
+            <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8 opacity-60">
+              <div className="text-xs md:text-sm font-semibold text-gray-600 bg-white/50 px-3 md:px-4 py-2 rounded-full">
+                10,000+ Users
               </div>
-            </div>
-          </div>
-
-          {/* Trust Indicators */}
-          <div className="text-center lg:text-left animate-fade-in delay-1200">
-            <p className="text-sm text-muted-foreground mb-4">
-              Trusted by Pi Network pioneers worldwide
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-6 sm:gap-8">
-              <div className="flex items-center gap-2 bg-white/50 backdrop-blur-sm rounded-lg px-4 py-2 border border-primary/20">
-                <div className="text-xl font-bold text-primary">π</div>
-                <span className="text-sm font-medium">Pi Browser Compatible</span>
+              <div className="text-xs md:text-sm font-semibold text-gray-600 bg-white/50 px-3 md:px-4 py-2 rounded-full">
+                50,000+ Links Created
               </div>
-              <div className="flex items-center gap-2 bg-white/50 backdrop-blur-sm rounded-lg px-4 py-2 border border-primary/20">
-                <Globe className="w-5 h-5 text-primary" />
-                <span className="text-sm font-medium">.pi Domain Ready</span>
-              </div>
-              <div className="flex items-center gap-2 bg-white/50 backdrop-blur-sm rounded-lg px-4 py-2 border border-primary/20">
-                <div className="text-xl font-bold text-primary">💰</div>
-                <span className="text-sm font-medium">Pi Payments Enabled</span>
+              <div className="text-xs md:text-sm font-semibold text-gray-600 bg-white/50 px-3 md:px-4 py-2 rounded-full">
+                100π+ Processed
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <style>
-        {`
-        @keyframes bounce-gentle {
-          0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-          40% { transform: translateY(-15px); }
-          60% { transform: translateY(-8px); }
-        }
-        
-        @keyframes pulse-gentle {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.8; }
-        }
-        
-        @keyframes gentle-blink {
-          0%, 85%, 100% { opacity: 1; }
-          90%, 95% { opacity: 0.1; }
-        }
-        
-        @keyframes shimmer {
-          0%, 100% { opacity: 0.6; }
-          50% { opacity: 1; }
-        }
-        
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-8px); }
-        }
-        
-        .animate-bounce-gentle {
-          animation: bounce-gentle 4s ease-in-out infinite;
-        }
-        
-        .animate-pulse-gentle {
-          animation: pulse-gentle 3s ease-in-out infinite;
-        }
-        
-        .animate-gentle-blink {
-          animation: gentle-blink 6s ease-in-out infinite;
-        }
-        
-        .animate-shimmer {
-          animation: shimmer 2.5s ease-in-out infinite;
-        }
-        
-        .animate-float {
-          animation: float 4s ease-in-out infinite;
-        }
-        `}
-      </style>
     </section>
   );
 };
