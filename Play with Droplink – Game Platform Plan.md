@@ -79,10 +79,10 @@ Players continue as long as they survive. Difficulty increases dynamically each 
 - No Pi AdNetwork
 - Access restricted to paid users only
 - Games include:
-  - Pi Chess (1 Pi)
-  - Droplink Dash Extreme (0.5 Pi)
-  - Puzzle Builder Pro (0.75 Pi)
-  - Build-a-Mascot (0.75 Pi)
+  - Pi Chess 
+  - Droplink Dash Extreme 
+  - Puzzle Builder Pro 
+  - Build-a-Mascot 
 
 ---
 
