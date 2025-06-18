@@ -1,4 +1,5 @@
 
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -173,14 +174,20 @@ export const useProfileData = (username: string | undefined) => {
           }
         }
 
-        // Properly handle theme JSONB conversion
+        // Properly handle theme JSONB conversion with type checking
         let theme: Theme | null = null;
         if (profileData.theme) {
           try {
+            let parsedTheme: any;
             if (typeof profileData.theme === 'string') {
-              theme = JSON.parse(profileData.theme);
+              parsedTheme = JSON.parse(profileData.theme);
             } else if (typeof profileData.theme === 'object' && profileData.theme !== null) {
-              theme = profileData.theme as Theme;
+              parsedTheme = profileData.theme;
+            }
+            
+            // Validate that the parsed theme has the required 'type' property
+            if (parsedTheme && typeof parsedTheme === 'object' && 'type' in parsedTheme && typeof parsedTheme.type === 'string') {
+              theme = parsedTheme as Theme;
             }
           } catch (error) {
             console.error('Error parsing theme:', error);
@@ -210,3 +217,4 @@ export const useProfileData = (username: string | undefined) => {
 
   return { loading, error, profileData };
 };
+
