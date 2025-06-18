@@ -53,6 +53,7 @@ import Complete from "@/pages/register/create/Complete";
 import NameImageBio from "@/pages/register/create/NameImageBio";
 import SelectPlatforms from "@/pages/register/create/SelectPlatforms";
 import SelectTemplate from "@/pages/register/create/SelectTemplate";
+import Onboarding from "@/pages/Onboarding";
 
 const queryClient = new QueryClient();
 
@@ -93,6 +94,7 @@ function App() {
               <Route path="/login-page" element={<LoginPage />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/signup-page" element={<SignupPage />} />
+              <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/pi-dashboard" element={<PiDashboard />} />
               <Route path="/profile/:username" element={<ProfilePage />} />
