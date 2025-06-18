@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -171,11 +172,27 @@ export const useProfileData = (username: string | undefined) => {
             activeStickerIds = [];
           }
         }
+
+        // Properly handle theme JSONB conversion
+        let theme: Theme | null = null;
+        if (profileData.theme) {
+          try {
+            if (typeof profileData.theme === 'string') {
+              theme = JSON.parse(profileData.theme);
+            } else if (typeof profileData.theme === 'object' && profileData.theme !== null) {
+              theme = profileData.theme as Theme;
+            }
+          } catch (error) {
+            console.error('Error parsing theme:', error);
+            theme = null;
+          }
+        }
         
         setProfileData({
           ...profileData,
           imported_pi_links: importedPiLinks,
           active_sticker_ids: activeStickerIds,
+          theme: theme,
           links: allLinks.length > 0 ? allLinks : defaultLinks,
         });
         
