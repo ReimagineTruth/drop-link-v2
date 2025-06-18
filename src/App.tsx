@@ -1,4 +1,3 @@
-
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
@@ -18,6 +17,7 @@ import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import Dashboard from "@/pages/Dashboard";
 import ProfilePage from "@/pages/ProfilePage";
+import UserProfile from "@/pages/UserProfile";
 import Admin from "@/pages/Admin";
 import Forums from "@/pages/Forums";
 import HelpArticle from "@/pages/HelpArticle";
@@ -96,6 +96,7 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/pi-dashboard" element={<PiDashboard />} />
               <Route path="/profile/:username" element={<ProfilePage />} />
+              <Route path="/u/:username" element={<UserProfile />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
               <Route path="/admin-portal" element={<AdminPortal />} />
