@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -16,6 +15,10 @@ interface PiLink {
   url: string;
 }
 
+interface Theme {
+  type: string;
+}
+
 interface ProfileData {
   id: string;
   username: string;
@@ -27,6 +30,8 @@ interface ProfileData {
   imported_pi_links?: PiLink[] | null;
   pi_profile_last_synced?: string | null;
   active_sticker_ids?: string[] | null;
+  pi_wallet_address?: string | null;
+  theme?: Theme | null;
   links: Link[];
 }
 
@@ -55,7 +60,9 @@ export const useProfileData = (username: string | undefined) => {
             imported_pi_bio,
             imported_pi_links,
             pi_profile_last_synced,
-            active_sticker_ids
+            active_sticker_ids,
+            pi_wallet_address,
+            theme
           `)
           .eq('username', username)
           .maybeSingle();

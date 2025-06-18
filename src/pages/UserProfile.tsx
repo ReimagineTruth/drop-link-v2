@@ -18,7 +18,7 @@ const UserProfile = () => {
   }
 
   if (error || !profileData) {
-    return <ErrorState error={error || "Profile not found"} />;
+    return <ErrorState username={username} />;
   }
 
   const profileUrl = `https://droplink.space/u/${username}`;
