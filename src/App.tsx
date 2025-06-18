@@ -1,3 +1,4 @@
+
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
@@ -54,8 +55,8 @@ import NameImageBio from "@/pages/register/create/NameImageBio";
 import SelectPlatforms from "@/pages/register/create/SelectPlatforms";
 import SelectTemplate from "@/pages/register/create/SelectTemplate";
 import Onboarding from "@/pages/Onboarding";
-import SelectPlan from "@/pages/register/create/SelectPlan";
-import CreateProfile from "@/pages/register/create/CreateProfile";
+import SelectPlan from "@/pages/register/SelectPlan";
+import CreateProfile from "@/pages/register/CreateProfile";
 
 const queryClient = new QueryClient();
 

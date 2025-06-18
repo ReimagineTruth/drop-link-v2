@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -136,7 +137,7 @@ const Onboarding = () => {
                   <div className="text-3xl font-bold text-primary mb-2">
                     {selectedPlan === 'free' ? '0π' : 
                      selectedPlan === 'starter' ? '8π' :
-                     selectedPlan === 'pro' ? '12π' : '18π}/month
+                     selectedPlan === 'pro' ? '12π' : '18π'}/month
                   </div>
                 </div>
                 
