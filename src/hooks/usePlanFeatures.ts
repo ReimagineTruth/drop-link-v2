@@ -21,10 +21,10 @@ export interface PlanFeatures {
 }
 
 export const usePlanFeatures = (): PlanFeatures & { currentPlan: string } => {
-  const { subscription, isAdmin } = useUser();
+  const { subscription, isAdmin, profile } = useUser();
   
   // Admin users get premium privileges
-  const currentPlan = isAdmin ? 'premium' : (subscription?.plan || 'free');
+  const currentPlan = isAdmin ? 'premium' : (profile?.plan || subscription?.plan || 'free');
   
   const planFeatures: Record<string, PlanFeatures> = {
     free: {

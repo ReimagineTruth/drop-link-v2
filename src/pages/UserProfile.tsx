@@ -1,85 +1,201 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { ExternalLink, Share2 } from "lucide-react";
-import { MetaTags } from "@/components/seo/MetaTags";
-import { useProfileData } from "@/hooks/useProfileData";
-import LoadingState from "@/components/profile/LoadingState";
-import ErrorState from "@/components/profile/ErrorState";
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { ExternalLink, Share2, Heart, QrCode, Users, MessageCircle } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { Helmet } from 'react-helmet-async';
+
+interface UserProfileData {
+  id: string;
+  username: string;
+  display_name: string;
+  bio: string;
+  avatar_url: string;
+  profile_title: string;
+  plan: string;
+  links: Array<{
+    id: string;
+    title: string;
+    url: string;
+    icon?: string;
+    clicks: number;
+  }>;
+  total_clicks: number;
+}
 
 const UserProfile = () => {
-  const { username } = useParams<{ username: string }>();
-  const { loading, error, profileData } = useProfileData(username);
+  const { username } = useParams();
+  const [profileData, setProfileData] = useState<UserProfileData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (loading) {
-    return <LoadingState />;
-  }
+  useEffect(() => {
+    if (username) {
+      fetchUserProfile(username);
+    }
+  }, [username]);
 
-  if (error || !profileData) {
-    return <ErrorState username={username} />;
-  }
+  const fetchUserProfile = async (username: string) => {
+    try {
+      setLoading(true);
+      
+      // Fetch user profile
+      const { data: profile, error: profileError } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('username', username)
+        .single();
 
-  const profileUrl = `https://droplink.space/u/${username}`;
-  const themeClasses = {
-    light: "bg-gradient-to-br from-blue-50 via-white to-indigo-50 text-gray-900",
-    dark: "bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white",
-    pastel: "bg-gradient-to-br from-pink-100 via-purple-50 to-indigo-100 text-purple-900"
+      if (profileError) throw profileError;
+
+      // Fetch user links
+      const { data: links, error: linksError } = await supabase
+        .from('links')
+        .select('*')
+        .eq('user_id', profile.id)
+        .eq('is_active', true)
+        .order('position');
+
+      if (linksError) throw linksError;
+
+      setProfileData({
+        ...profile,
+        links: links || []
+      });
+
+      // Track page view
+      await supabase
+        .from('analytics')
+        .insert({
+          user_id: profile.id,
+          page_view: true,
+          referrer: document.referrer,
+          user_agent: navigator.userAgent,
+          ip_address: 'masked' // In production, you'd get this from server
+        });
+
+    } catch (error: any) {
+      console.error('Error fetching profile:', error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const theme = profileData.theme?.type || 'light';
-  const containerClass = themeClasses[theme as keyof typeof themeClasses] || themeClasses.light;
+  const handleLinkClick = async (link: any) => {
+    try {
+      // Track link click
+      await supabase
+        .from('analytics')
+        .insert({
+          user_id: profileData?.id,
+          link_id: link.id,
+          link_click: true,
+          referrer: window.location.href,
+          user_agent: navigator.userAgent,
+          ip_address: 'masked'
+        });
+
+      // Update link clicks count
+      await supabase
+        .from('links')
+        .update({ clicks: link.clicks + 1 })
+        .eq('id', link.id);
+
+      // Open link
+      window.open(link.url, '_blank');
+    } catch (error) {
+      console.error('Error tracking link click:', error);
+      // Still open the link even if tracking fails
+      window.open(link.url, '_blank');
+    }
+  };
 
   const handleShare = async () => {
+    const url = window.location.href;
+    
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `${profileData.display_name || profileData.username} | Droplink`,
-          text: profileData.bio || `Check out ${profileData.username}'s profile`,
-          url: profileUrl,
+          title: `${profileData?.display_name}'s Profile`,
+          text: profileData?.bio || `Check out ${profileData?.display_name}'s links`,
+          url: url,
         });
       } catch (error) {
-        console.log('Error sharing:', error);
+        console.error('Error sharing:', error);
       }
     } else {
-      // Fallback to copying to clipboard
-      navigator.clipboard.writeText(profileUrl);
-    }
-  };
-
-  const handleLinkClick = async (linkId: string, url: string) => {
-    // Track link click analytics
-    try {
-      await fetch('/api/analytics/link-click', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          linkId,
-          profileId: profileData.id,
-          referrer: document.referrer,
-          userAgent: navigator.userAgent
-        })
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(url);
+      toast({
+        title: "Link Copied!",
+        description: "Profile link has been copied to clipboard.",
       });
-    } catch (error) {
-      console.error('Failed to track link click:', error);
     }
-
-    // Open the link
-    window.open(url, '_blank', 'noopener,noreferrer');
   };
+
+  const handleTipUser = () => {
+    toast({
+      title: "Tip Feature",
+      description: "Pi Network tipping will be available soon!",
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error || !profileData) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
+        <Card className="max-w-md mx-auto text-center p-8">
+          <CardContent>
+            <h1 className="text-2xl font-bold mb-4">Profile Not Found</h1>
+            <p className="text-muted-foreground mb-4">
+              The profile you're looking for doesn't exist or has been removed.
+            </p>
+            <Button onClick={() => window.location.href = '/'}>
+              Go Home
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const themeClasses = "bg-gradient-to-br from-blue-50 via-white to-indigo-50 text-gray-900";
 
   return (
     <>
-      <MetaTags
-        title={`${profileData.display_name || profileData.username} | Droplink`}
-        description={profileData.bio || `Check out ${profileData.username}'s links and content`}
-        image={profileData.avatar_url || `https://api.dicebear.com/7.x/adventurer/svg?seed=${profileData.username}`}
-        url={profileUrl}
-      />
-      
-      <div className={`min-h-screen ${containerClass} py-8 px-4`}>
+      <Helmet>
+        <title>{profileData.display_name} - Droplink</title>
+        <meta name="description" content={profileData.bio || `Check out ${profileData.display_name}'s links on Droplink`} />
+        <meta property="og:title" content={`${profileData.display_name} - Droplink`} />
+        <meta property="og:description" content={profileData.bio || `Check out ${profileData.display_name}'s links on Droplink`} />
+        <meta property="og:image" content={profileData.avatar_url || `https://api.dicebear.com/7.x/adventurer/svg?seed=${profileData.username}`} />
+        <meta property="og:url" content={window.location.href} />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Helmet>
+
+      <div className={`min-h-screen ${themeClasses} py-8 px-4`}>
         <div className="max-w-md mx-auto">
+          {/* Pi Ads for Free Plan */}
+          {profileData.plan === 'free' && (
+            <div className="mb-6 p-4 bg-yellow-100 border border-yellow-300 rounded-lg text-center">
+              <p className="text-sm text-yellow-800 font-medium">📢 Pi Network Ad</p>
+              <p className="text-xs text-yellow-600 mt-1">Upgrade to remove ads</p>
+            </div>
+          )}
+
           {/* Profile Header */}
           <div className="text-center mb-8">
             <Avatar className="w-24 h-24 mx-auto mb-4 border-4 border-white shadow-lg">
@@ -87,107 +203,111 @@ const UserProfile = () => {
                 src={profileData.avatar_url || `https://api.dicebear.com/7.x/adventurer/svg?seed=${profileData.username}`}
                 alt={`${profileData.username}'s avatar`} 
               />
-              <AvatarFallback className="text-xl font-bold">
+              <AvatarFallback className="text-2xl font-bold">
                 {profileData.username.substring(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             
-            <h1 className="text-2xl font-bold mb-2">
-              {profileData.display_name || `@${profileData.username}`}
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">
+              {profileData.display_name}
             </h1>
             
-            {profileData.display_name && (
-              <p className="text-lg opacity-80 mb-2">@{profileData.username}</p>
+            {profileData.profile_title && (
+              <p className="text-gray-600 text-sm mb-2">{profileData.profile_title}</p>
             )}
             
+            <p className="text-gray-500 text-sm mb-3">@{profileData.username}</p>
+            
             {profileData.bio && (
-              <p className="text-center max-w-sm mx-auto opacity-90 leading-relaxed">
+              <p className="text-gray-700 text-sm leading-relaxed mb-4 max-w-xs mx-auto">
                 {profileData.bio}
               </p>
             )}
             
-            {/* Share Button */}
-            <Button
-              variant="outline"
-              size="sm"
-              className="mt-4"
-              onClick={handleShare}
-            >
-              <Share2 className="w-4 h-4 mr-2" />
-              Share Profile
-            </Button>
+            <Badge className="text-xs mb-6">
+              {profileData.plan === 'free' ? '❤️ Free' :
+               profileData.plan === 'starter' ? '⚡ Starter' :
+               profileData.plan === 'pro' ? '👑 Pro' : '💎 Premium'}
+            </Badge>
           </div>
 
-          {/* Links Section */}
-          <div className="space-y-4">
-            {profileData.links && profileData.links.length > 0 ? (
-              profileData.links.map((link) => (
-                <div
-                  key={link.id}
-                  className="p-1 hover:scale-[1.02] transition-all duration-200 cursor-pointer shadow-md hover:shadow-lg bg-white/90 backdrop-blur-sm border border-white/20 rounded-lg"
-                  onClick={() => handleLinkClick(link.id, link.url)}
-                >
-                  <Button
-                    variant="ghost"
-                    className="w-full h-14 justify-start text-left font-medium text-gray-900 hover:bg-transparent"
-                  >
-                    <div className="flex items-center w-full">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mr-3 text-white text-sm">
-                        {link.icon || <ExternalLink className="w-4 h-4" />}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="font-semibold truncate">{link.title}</div>
-                        <div className="text-xs text-gray-500 truncate">{link.url}</div>
-                      </div>
-                      <ExternalLink className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                    </div>
-                  </Button>
+          {/* Links */}
+          <div className="space-y-3 mb-8">
+            {profileData.links.map((link) => (
+              <Button 
+                key={link.id}
+                onClick={() => handleLinkClick(link)}
+                className="w-full bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 shadow-sm rounded-xl py-6 h-auto transition-all duration-200 hover:shadow-md"
+                variant="outline"
+              >
+                <div className="flex items-center justify-between w-full">
+                  <span className="font-medium text-left">{link.title}</span>
+                  <ExternalLink className="w-4 h-4 text-gray-400" />
                 </div>
-              ))
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-lg opacity-70">No links added yet</p>
-                <p className="text-sm opacity-50 mt-2">Check back later for updates!</p>
+              </Button>
+            ))}
+            
+            {profileData.links.length === 0 && (
+              <div className="text-center py-8">
+                <p className="text-gray-500 text-sm">No links added yet</p>
               </div>
             )}
           </div>
 
-          {/* Pi Tips Section */}
-          {profileData.pi_wallet_address && (
-            <div className="mt-8 p-6 text-center bg-gradient-to-r from-yellow-400/20 to-orange-500/20 border-yellow-300/30 rounded-lg border">
-              <h3 className="font-semibold mb-2">💝 Support with Pi</h3>
-              <p className="text-sm opacity-80 mb-4">
-                Show your appreciation by sending Pi tips!
-              </p>
+          {/* Pi Tips Section (Starter+ only) */}
+          {profileData.plan !== 'free' && (
+            <div className="mb-6">
               <Button 
-                className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white"
-                onClick={() => {
-                  // Implementation for Pi tipping would go here
-                  alert('Pi tipping feature coming soon!');
-                }}
+                onClick={handleTipUser}
+                className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-medium rounded-xl py-4"
               >
-                💰 Tip with Pi
+                <div className="flex items-center justify-center gap-2">
+                  <Heart className="w-4 h-4" />
+                  <span>💰 Tip me in Pi</span>
+                </div>
               </Button>
             </div>
           )}
 
-          {/* Footer */}
-          <div className="text-center mt-12 pb-8">
-            <p className="text-sm opacity-60">
-              Powered by{' '}
-              <a 
-                href="https://droplink.space" 
-                className="font-semibold hover:opacity-80 transition-opacity"
-                target="_blank"
-                rel="noopener noreferrer"
+          {/* Action Buttons */}
+          <div className="flex justify-center gap-4 mb-6">
+            <Button 
+              size="sm" 
+              variant="outline" 
+              onClick={handleShare}
+              className="bg-white/80 border-gray-200 hover:bg-white"
+            >
+              <Share2 className="w-4 h-4 mr-2" />
+              Share
+            </Button>
+            
+            {profileData.plan !== 'free' && (
+              <Button 
+                size="sm" 
+                variant="outline"
+                className="bg-white/80 border-gray-200 hover:bg-white"
               >
-                Droplink
-              </a>
-            </p>
-            <p className="text-xs opacity-40 mt-1">
-              Create your own link-in-bio page
-            </p>
+                <QrCode className="w-4 h-4 mr-2" />
+                QR Code
+              </Button>
+            )}
           </div>
+
+          {/* Stats (if available) */}
+          {profileData.total_clicks > 0 && (
+            <div className="text-center mb-6">
+              <p className="text-xs text-gray-500">
+                {profileData.total_clicks} total clicks
+              </p>
+            </div>
+          )}
+
+          {/* Droplink Badge for Free Plan */}
+          {profileData.plan === 'free' && (
+            <div className="text-center">
+              <p className="text-xs text-gray-400">Powered by Droplink</p>
+            </div>
+          )}
         </div>
       </div>
     </>

@@ -1,14 +1,14 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import PlanSelector, { PlanType } from '@/components/onboarding/PlanSelector';
+import PlanSelector from '@/components/onboarding/PlanSelector';
 import { useUser } from '@/context/UserContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import type { PlanType } from '@/types/plan';
 
 const Onboarding = () => {
   const navigate = useNavigate();
@@ -136,7 +136,7 @@ const Onboarding = () => {
                   <div className="text-3xl font-bold text-primary mb-2">
                     {selectedPlan === 'free' ? '0π' : 
                      selectedPlan === 'starter' ? '8π' :
-                     selectedPlan === 'pro' ? '12π' : '18π'}/month
+                     selectedPlan === 'pro' ? '12π' : '18π}/month
                   </div>
                 </div>
                 

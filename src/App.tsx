@@ -54,6 +54,8 @@ import NameImageBio from "@/pages/register/create/NameImageBio";
 import SelectPlatforms from "@/pages/register/create/SelectPlatforms";
 import SelectTemplate from "@/pages/register/create/SelectTemplate";
 import Onboarding from "@/pages/Onboarding";
+import SelectPlan from "@/pages/register/create/SelectPlan";
+import CreateProfile from "@/pages/register/create/CreateProfile";
 
 const queryClient = new QueryClient();
 
@@ -112,6 +114,8 @@ function App() {
               {/* Registration flow routes */}
               <Route path="/register/your-information" element={<YourInformation />} />
               <Route path="/register/select-categories" element={<SelectCategories />} />
+              <Route path="/register/select-plan" element={<SelectPlan />} />
+              <Route path="/register/create-profile" element={<CreateProfile />} />
               <Route path="/register/create/select-template" element={<SelectTemplate />} />
               <Route path="/register/create/select-platforms" element={<SelectPlatforms />} />
               <Route path="/register/create/add-links" element={<AddLinks />} />
